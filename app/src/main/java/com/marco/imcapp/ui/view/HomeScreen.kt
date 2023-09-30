@@ -21,9 +21,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.marco.imcapp.calcular.CalcularIMC
 import com.marco.imcapp.ui.components.OutlinedText
 import com.marco.imcapp.ui.components.TopApp
 import com.marco.imcapp.ui.theme.Light_Blue
@@ -42,15 +44,21 @@ fun CalculadoraIMC() {
     }
 
     var resultado by rememberSaveable {
-        mutableStateOf("IMC")
+        mutableStateOf("")
     }
+
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
             Surface(
                 shadowElevation = 18.dp
             ) {
-                TopApp()
+                TopApp(acao = {
+                    peso = ""
+                    altura = ""
+                    resultado = ""
+                })
             }
         }
     ) { paddingValues ->
@@ -68,15 +76,27 @@ fun CalculadoraIMC() {
                 modifier = Modifier.padding(50.dp)
             )
 
-            OutlinedText(value = peso, onValueChanged = { peso = it }, label = "Peso em (Kg)")
+            OutlinedText(
+                value = peso,
+                onValueChanged = {
+                    peso = it },
+                label = "Peso em (Kg)"
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedText(value = altura, onValueChanged = { altura = it }, label = "Altura")
+            OutlinedText(
+                value = altura,
+                onValueChanged = {
+                    altura = it
+                },
+                label = "Altura"
+            )
 
             Button(
                 onClick = {
-
+                    resultado =
+                        CalcularIMC().verificar(peso = peso, altura = altura, context = context)
                 }, modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
